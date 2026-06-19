@@ -1,17 +1,5 @@
 task_list =[]
 
-def view_task_list():
-    for x, y in enumerate(task_list):
-        if y["done"]:
-            print(f'{x + 1}. [✓] {y["task"]}')
-        else:
-            print(f'{x + 1}. [ ] {y["task"]}')
-
-def empty_task_list():
-    if not task_list:
-        print("No Task Found!")
-    return True
-
 while True:
     try:
         choice = int(input("1.Add Task\n"
@@ -34,24 +22,44 @@ while True:
         if not task_list:
             print("No Task Found!")
             continue
-        view_task_list()
+        for x, y in enumerate(task_list):
+            if y["done"]:
+                print(f'{x+1}. [✓] {y["task"]}')
+            else:
+                print(f'{x+1}. [ ] {y["task"]}')
     elif choice == 3:
         if not task_list:
             print("No Task Found!")
             continue
-        delete = int(input("Select Task You Want To Remove: "))
+        try:
+            delete = int(input("Select Task You Want To Remove: "))
+        except ValueError:
+            print("Invalid")
+            continue
         if not 1 <= delete <= len(task_list):
             print(f"Dont have {delete}, please choice again! ")
             continue
         del task_list[delete-1]
         print("Task Removed!\n------------")
-        view_task_list()
+        for x, y in enumerate(task_list):
+            if y["done"]:
+                print(f'{x+1}. [✓] {y["task"]}')
+            else:
+                print(f'{x+1}. [ ] {y["task"]}')
     elif choice == 4:
         if not task_list:
             print("No Task Found!")
             continue
-        view_task_list()
-        mark = int(input("Please Mark what task is complete: "))
+        for x, y in enumerate(task_list):
+            if y["done"]:
+                print(f'{x+1}. [✓] {y["task"]}')
+            else:
+                print(f'{x+1}. [ ] {y["task"]}')
+        try:
+            mark = int(input("Please Mark what task is complete: "))
+        except ValueError:
+            print("Invalid")
+            continue
         if not 1 <= mark <= len(task_list):
             print("Wrong Key In!")
             continue
@@ -59,13 +67,22 @@ while True:
             print("Already complete")
         else:
             task_list[mark-1]["done"] = True
-            view_task_list()
+            for x, y in enumerate(task_list):
+                if y["done"]:
+                    print(f'{x + 1}. [✓] {y["task"]}')
+                else:
+                    print(f'{x + 1}. [ ] {y["task"]}')
     elif choice == 5:
-        if not task_list:
-            print("No Task Found!")
+        for x, y in enumerate(task_list):
+            if y["done"]:
+                print(f'{x + 1}. [✓] {y["task"]}')
+            else:
+                print(f'{x + 1}. [ ] {y["task"]}')
+        try:
+            undo = int(input("Key In Mark you want to Undo: "))
+        except ValueError:
+            print("Invalid")
             continue
-        view_task_list()
-        undo = int(input("Key In Mark you want to Undo: "))
         if not 1 <= undo <= len(task_list):
             print("Wrong Key In!")
             continue
@@ -74,6 +91,10 @@ while True:
             print("Mark Cancelled!")
         else:
             print("Task is No Complete!")
-        view_task_list()
+        for x, y in enumerate(task_list):
+            if y["done"]:
+                print(f'{x+1}. [✓] {y["task"]}')
+            else:
+                print(f'{x+1}. [ ] {y["task"]}')
     elif choice == 6:
         break
