@@ -15,6 +15,13 @@ def not_found_student(name):
         print("This Student Name Invalid!")
         return True
 
+def error_key(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Invalid")
+
 
 while True:
     try:
@@ -32,22 +39,27 @@ while True:
 
     if choice == 1:
         student = input("Key In Student Name: ").capitalize()
-        if student == "" or student == " ":
+        if student in students:
+            print("Student Already Exists")
+            continue
+        elif student.strip() == "":
             continue
         students[student] = 0
 
 
     elif choice == 2:
+        if no_rekod_student():
+            continue
         search_students()
-        no_rekod_student()
 
     elif choice == 3:
         if no_rekod_student():
             continue
         search = input("Search Student Name: ").capitalize()
+        if not_found_student(search):
+            continue
         if search in students:
             print("Have This Student")
-        not_found_student(search)
 
     elif choice == 4:
         if no_rekod_student():
@@ -56,7 +68,7 @@ while True:
         name = input("Select Student: ").capitalize()
         if not_found_student(name):
             continue
-        score = int(input("Update Student Score: "))
+        score = error_key(("Update Student Score: "))
         if 0 > score or score > 100:
             print("Score minimun is 0 and maximun is 100 ")
             continue
