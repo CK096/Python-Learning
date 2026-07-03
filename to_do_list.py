@@ -1,100 +1,122 @@
-task_list =[]
+students = {}
+
+def search_students():
+    for name, mark in students.items():
+        print(f"{name} : {mark}")
+    print("------------")
+
+def no_rekod_student():
+    if not students:
+        print("Rekod Is Empty!")
+        return True
+
+def not_found_student(name):
+    if name not in students:
+        print("This Student Name Invalid!")
+        return True
+
+def error_key(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Invalid")
+
 
 while True:
-    try:
-        choice = int(input("1.Add Task\n"
-                           "2.View Task\n"
-                           "3.Remove Task\n"
-                           "4.Mark Completed\n"
-                           "5.Undo Mark\n"
-                           "6.Exit\n"
-                           "------------\n"
-                           "Choose: "))
-    except ValueError:
-        print("Invalid")
-        continue
+    choice = error_key(f"1. Add Student\n"
+                        "2. View Student\n"
+                        "3. Search Student\n"
+                        "4. Update Score\n"
+                        "5. Delete Student\n"
+                        "6. Show Highest Score\n"
+                        "7. Show Lowest Score\n"
+                        "8. Average Score\n"
+                        "9. Exit\n"
+                        "------------------------\n"
+                        "Choose: ")
 
     if choice == 1:
-        quest = input("Enter Task: ")
-        task_list.append({"task": quest, "done": False})
-        print("Task Added!\n------------")
+        student = input("Key In Student Name: ").capitalize()
+        if student in students:
+            print("Student Already Exists")
+            continue
+        elif student.strip() == "":
+            continue
+        students[student] = 0
+
+
     elif choice == 2:
-        if not task_list:
-            print("No Task Found!")
+        if no_rekod_student():
             continue
-        for x, y in enumerate(task_list):
-            if y["done"]:
-                print(f'{x+1}. [✓] {y["task"]}')
-            else:
-                print(f'{x+1}. [ ] {y["task"]}')
+        search_students()
+
     elif choice == 3:
-        if not task_list:
-            print("No Task Found!")
+        if no_rekod_student():
             continue
-        try:
-            delete = int(input("Select Task You Want To Remove: "))
-        except ValueError:
-            print("Invalid")
+        search = input("Search Student Name: ").capitalize()
+        if not_found_student(search):
             continue
-        if not 1 <= delete <= len(task_list):
-            print(f"Dont have {delete}, please choice again! ")
-            continue
-        del task_list[delete-1]
-        print("Task Removed!\n------------")
-        for x, y in enumerate(task_list):
-            if y["done"]:
-                print(f'{x+1}. [✓] {y["task"]}')
-            else:
-                print(f'{x+1}. [ ] {y["task"]}')
+        if search in students:
+            print("Have This Student")
+
     elif choice == 4:
-        if not task_list:
-            print("No Task Found!")
+        if no_rekod_student():
             continue
-        for x, y in enumerate(task_list):
-            if y["done"]:
-                print(f'{x+1}. [✓] {y["task"]}')
-            else:
-                print(f'{x+1}. [ ] {y["task"]}')
-        try:
-            mark = int(input("Please Mark what task is complete: "))
-        except ValueError:
-            print("Invalid")
+        search_students()
+        name = input("Select Student: ").capitalize()
+        if not_found_student(name):
             continue
-        if not 1 <= mark <= len(task_list):
-            print("Wrong Key In!")
+        score = error_key(("Update Student Score: "))
+        if 0 > score or score > 100:
+            print("Score Min is 0 and Max is 100 ")
             continue
-        if task_list[mark-1]["done"]:
-            print("Already complete")
-        else:
-            task_list[mark-1]["done"] = True
-            for x, y in enumerate(task_list):
-                if y["done"]:
-                    print(f'{x + 1}. [✓] {y["task"]}')
-                else:
-                    print(f'{x + 1}. [ ] {y["task"]}')
+        students.update({name:score})
+        print(f"Update {name} Score Complete")
+
     elif choice == 5:
-        for x, y in enumerate(task_list):
-            if y["done"]:
-                print(f'{x + 1}. [✓] {y["task"]}')
-            else:
-                print(f'{x + 1}. [ ] {y["task"]}')
-        try:
-            undo = int(input("Key In Mark you want to Undo: "))
-        except ValueError:
-            print("Invalid")
+        if no_rekod_student():
             continue
-        if not 1 <= undo <= len(task_list):
-            print("Wrong Key In!")
+        search_students()
+        delete = input("Select student U want delete: ").capitalize()
+        if not_found_student(delete):
             continue
-        if task_list[undo-1]["done"]:
-            task_list[undo-1]["done"] = False
-            print("Mark Cancelled!")
-        else:
-            print("Task is No Complete!")
-        for x, y in enumerate(task_list):
-            if y["done"]:
-                print(f'{x+1}. [✓] {y["task"]}')
-            else:
-                print(f'{x+1}. [ ] {y["task"]}')
+        del students[delete]
+        print("Student Rekod Is Delete!!!")
+
     elif choice == 6:
+        if no_rekod_student():
+            continue
+        search_students()
+        highest = max(students.values())
+        for name, score in students.items():
+            if score == highest:
+                print(f"Highest Score is {name}:{score}")
+
+    elif choice == 7:
+        if no_rekod_student():
+            continue
+        search_students()
+        lowest = min(students.values())
+        for name, score in students.items():
+            if score == lowest:
+                print(f"Lowest Score is {name}:{score}")
+
+    elif choice == 8:
+        if no_rekod_student():
+            continue
+        search_students()
+        total = sum(students.values())
+        qty = len(students)
+        print(f"Average Score is {total / qty:.2f}")
+
+    elif choice == 9:
+        print("Thanks For Using")
         break
+
+
+
+
+
+
+
