@@ -75,7 +75,7 @@ while True:
         if not_found_student(search):
             continue
         if search in students:
-            print("Have This Student")
+            print(f"Have This Student,name{search}:{get(search)}")
 
     elif choice == 4:
         if no_rekod_student():
