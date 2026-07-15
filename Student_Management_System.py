@@ -9,7 +9,7 @@ try:
             score = int(data[1])
             students[name] = score
 except FileNotFoundError: #如果找不到文件就Pass
-    print("First Time Running Program"
+    print("First Time Running Program")
 
 def save_students(): #储存文件
     with open(path_file, "w") as file:
