@@ -1,141 +1,92 @@
-students = {}
-path_file = r"C:\Users\user\Desktop\workshop\students.txt"
+def load_expense():
+    try:
+        with open(path_file, "r") as file:
+            for line in file:
+                data = line.strip().split(",")
+                category = data[0]
+                amount = float(data[1])
+                expenses.append({"category": category,"amount" : amount})
+    except FileNotFoundError:
+        pass
 
-try:
-    with open(path_file,"r") as file: #打开文件
-        for line in file:
-            data = line.strip().split(",")
-            name = data[0]
-            score = int(data[1])
-            students[name] = score
-except FileNotFoundError: #如果找不到文件就Pass
-    print("First Time Running Program")
+def save_expense():
+    with open(path_file,"w") as file:
+        for expense in expenses:
+            file.write(f"{expense['category']},{expense['amount']}\n")
 
-def save_students(): #储存文件
-    with open(path_file, "w") as file:
-        for name, score in students.items():
-            file.write(f"{name},{score}\n")
-            
-def search_students(): #显示Dictionary
-    for name, mark in students.items():
-        print(f"{name} : {mark}")
-    print("------------")
+def add_expense():
+    category = input("Type Of Category Expense:").strip().title()
+    amount = float(input("How Many you use?: RM "))
+    expenses.append({"category": category, "amount": amount})
+    print("Add in Success!")
 
-def no_rekod_student(): #如果Dictionary空就用到这个
-    if not students:
-        print("Rekod Is Empty!")
-        return True
+def view_expense():
+    for index, expense in enumerate(expenses):
+        print(f"{index + 1}. {expense['category']} : RM {expense['amount']:.2f}")
 
-def not_found_student(name): #如果找不到该名字
-    if name not in students:
-        print("This Student Name Invalid!")
-        return True
-
-def error_key(prompt): #错误处理
+def error_key(prompt):
     while True:
         try:
             return int(input(prompt))
         except ValueError:
-            print("Invalid")
+            print("Invalid Number")
 
+expenses = []
+path_file = r"C:\Users\user\Desktop\workshop\expenses_record.txt"
+load_expense()
 
 while True:
-    choice = error_key(f"1. Add Student\n"
-                        "2. View Student\n"
-                        "3. Search Student\n"
-                        "4. Update Score\n"
-                        "5. Delete Student\n"
-                        "6. Show Highest Score\n"
-                        "7. Show Lowest Score\n"
-                        "8. Average Score\n"
-                        "9. Exit\n"
-                        "------------------------\n"
-                        "Choose: ")
-
+    choice = error_key("=====Expense Tracker=====\n"
+                       "1.Add Expense\n"
+                       "2.View Expense\n"
+                       "3.Search Expense\n"
+                       "4.Delete Expense\n"
+                       "5.Total Expense\n"
+                       "6.Category Summary\n"
+                       "6.Exit\n"
+                       "-------------------------\n"
+                       "Choice :")
     if choice == 1:
-        student = input("Key In Student Name: ").capitalize()
-        if student in students:
-            print("Student Already Exists")
-            continue
-        elif not student.strip():
-            continue
-        students[student] = 0 #加入Dictionary里面
-        save_students()
-
-
+        add_expense()
+        save_expense()
     elif choice == 2:
-        if no_rekod_student():
-            continue
-        search_students()
-
+        view_expense()
     elif choice == 3:
-        if no_rekod_student():
-            continue
-        search = input("Search Student Name: ").capitalize()
-        if not_found_student(search):
-            continue
-        if search in students:
-            print(f"Have This Student,name is {search} score is{students.get(search)}")
+        found = False
+        search = input("what category expense you want to search: ").strip().title()
+        for index,result in enumerate(expenses):
+            if result["category"] == search:
+              found = True
+              print(f"{index + 1}.{result['category']} RM {result['amount']:.2f}")
+        if not found:
+            print("Category Not Found")
 
     elif choice == 4:
-        if no_rekod_student():
+        view_expense()
+        delete = error_key("Select list item need to remove: ")
+        if delete < 1 or delete > len(expenses):
+            print("Invalid")
             continue
-        search_students()
-        name = input("Select Student: ").capitalize()
-        if not_found_student(name):
-            continue
-        score = error_key(("Update Student Score: "))
-        if 0 > score or score > 100:
-            print("Score Min is 0 and Max is 100 ")
-            continue
-        students[name] = score #直接更新某段Dictionary,如果name一样的，就更新Score
-        save_students()
-        print(f"Update {name} Score Complete")
-
+        del expenses[delete - 1]
+        print("Item list remove Success")
+        save_expense()
     elif choice == 5:
-        if no_rekod_student():
-            continue
-        search_students()
-        delete = input("Select student U want delete: ").capitalize()
-        if not_found_student(delete):
-            continue
-        del students[delete] #直接删除Dictionary 里的某段
-        save_students()
-        print("Student Rekod Is Delete!!!")
+        total = 0
+        for expense in expenses:
+            total += expense["amount"]
+        print(f"Total is RM {total:.2f}")
 
     elif choice == 6:
-        if no_rekod_student():
-            continue
-        search_students()
-        highest = max(students.values())
-        for name, score in students.items():
-            if score == highest:
-                print(f"Highest Score is {name}:{score}")
+        summary = {}
+        print("===== Category Summary =====")
+        for expense in expenses:
+            if expense["category"] in summary:
+                summary[expense["category"]] += expense["amount"]
+            else:
+                summary[expense["category"]] = expense["amount"]
+        for category,price in summary.items():
+            print(f"{category} : RM {price:.2f}")
 
     elif choice == 7:
-        if no_rekod_student():
-            continue
-        search_students()
-        lowest = min(students.values())
-        for name, score in students.items():
-            if score == lowest:
-                print(f"Lowest Score is {name}:{score}")
-
-    elif choice == 8:
-        if no_rekod_student():
-            continue
-        search_students()
-        total = sum(students.values())
-        qty = len(students)
-        print(f"Average Score is {total / qty:.2f}")
-
-    elif choice == 9:
-        print("Thanks For Using")
+        print("Thanks for using Expense Traker")
         break
-
-
-
-
-
-
-
