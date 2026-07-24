@@ -51,9 +51,9 @@ while True:
             continue
         products.append({"name": name,"price": price,"stock": stock})
 
-    if choice == 2:
+    elif choice == 2:
         print("===== Product List =====")
         view_products_list()
 
-    if choice == 3:
+    elif choice == 3:
         exit()
