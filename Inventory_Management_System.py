@@ -23,8 +23,8 @@ def error_float(prompt):
 def view_products_list():
     for index, product in enumerate(products):
         print(f"{index + 1}.{product["name"]} \n"
-              f"Price : RM{product["price"]:.2f}\n"
-              f"Stock : {product["stock"]}\n"
+              f"  Price : RM{product["price"]:.2f}\n"
+              f"  Stock : {product["stock"]}\n"
               f" ")
 
 
