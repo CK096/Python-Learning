@@ -11,7 +11,7 @@ def error_int(prompt):
         try:
             return int(input(prompt))
         except ValueError:
-            print("Invalid Stock Quantity!")
+            print("Error")
 
 def error_float(prompt):
     while True:
@@ -20,26 +20,40 @@ def error_float(prompt):
         except ValueError:
             print("Invalid Price!")
 
+def view_prodicts_list():
+    for index, product in enumerate(products):
+        print(f"{index + 1}.{product["name"]} \n"
+              f"Price : RM{product["price"]:.2f}\n"
+              f"Stock : {product["stock"]}\n"
+              f" ")
+
 
 
 
 while True:
-    name = input("Product Name: ").strip().title()
-    if product_empty(name):
-        continue
-    price = error_float("Price: RM")
-    if price <= 0:
-        print("Price Cannot Below Than RM 0.01")
-        continue
-    stock = error_int("Stock Quantity: ")
-    if stock < 0:
-        print("Stock Cannot Be Negative")
-        continue
-    products.append({"name": name,"price": price,"stock": stock})
+    choice = error_int(f"===== Inventory Management System =====\n"
+                       f"1. Add Product\n"
+                       f"2. View Product\n"
+                       f"3. Exit\n"
+                       f"====================\n"
+                       f"Choice : ")
+    if choice == 1:
+        name = input("Product Name: ").strip().title()
+        if product_empty(name):
+            continue
+        price = error_float("Price: RM")
+        if price <= 0:
+            print("Price Cannot Below Than RM 0.01")
+            continue
+        stock = error_int("Stock Quantity: ")
+        if stock < 0:
+            print("Stock Cannot Be Negative")
+            continue
+        products.append({"name": name,"price": price,"stock": stock})
 
-    
-    print("===== Product List =====")
-    for index, product in enumerate(products):
-        print(f"{index+1}.{product["name"]} \n"
-              f"Price : RM{product["price"]:.2f}\n"
-              f"Stock : {product["stock"]}")
+    if choice == 2:
+        print("===== Product List =====")
+        view_prodicts_list()
+
+    if choice == 3:
+        exit()
