@@ -56,4 +56,5 @@ while True:
         view_products_list()
 
     elif choice == 3:
-        exit()
+        print("Thanks for using Inventory Management System")
+        break
