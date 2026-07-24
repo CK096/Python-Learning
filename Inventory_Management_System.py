@@ -20,7 +20,7 @@ def error_float(prompt):
         except ValueError:
             print("Invalid Price!")
 
-def view_prodicts_list():
+def view_products_list():
     for index, product in enumerate(products):
         print(f"{index + 1}.{product["name"]} \n"
               f"Price : RM{product["price"]:.2f}\n"
@@ -53,7 +53,7 @@ while True:
 
     if choice == 2:
         print("===== Product List =====")
-        view_prodicts_list()
+        view_products_list()
 
     if choice == 3:
         exit()
