@@ -6,6 +6,12 @@ def product_empty(name):
         return True
     return False
 
+def products_empty():
+    if not products:
+        print("List is empty!")
+        return True
+    return False
+
 def error_int(prompt):
     while True:
         try:
@@ -22,9 +28,9 @@ def error_float(prompt):
 
 def view_products_list():
     for index, product in enumerate(products):
-        print(f"{index + 1}.{product["name"]} \n"
-              f"  Price : RM{product["price"]:.2f}\n"
-              f"  Stock : {product["stock"]}\n"
+        print(f"{index + 1}. {product["name"]} \n"
+              f"   Price : RM{product["price"]:.2f}\n"
+              f"   Stock : {product["stock"]}\n"
               f" ")
 
 
@@ -34,14 +40,15 @@ while True:
     choice = error_int(f"===== Inventory Management System =====\n"
                        f"1. Add Product\n"
                        f"2. View Product\n"
-                       f"3. Exit\n"
+                       f"3. Search Product\n"
+                       f"4. Exit\n"
                        f"====================\n"
                        f"Choice : ")
     if choice == 1:
         name = input("Product Name: ").strip().title()
         if product_empty(name):
             continue
-        price = error_float("Price: RM")
+        price = error_float("Price: RM ")
         if price <= 0:
             print("Price Cannot Below Than RM 0.01")
             continue
@@ -52,9 +59,29 @@ while True:
         products.append({"name": name,"price": price,"stock": stock})
 
     elif choice == 2:
+        if products_empty():
+            continue
         print("===== Product List =====")
         view_products_list()
 
     elif choice == 3:
+        if products_empty():
+            continue
+        found = False
+        print("===== Search Product =====")
+        search = input("Search: ").strip().title()
+        if product_empty(search):
+            continue
+        for product in products:
+            if search == product["name"]:
+                print(f"Product Found\n"
+                      f"{product['name']}\n"
+                      f"Price : RM {product['price']:.2f}\n"
+                      f"Stock : {product['stock']}")
+                found = True
+        if not found :
+            print("Product Not Found")
+
+    elif choice == 4:
         print("Thanks for using Inventory Management System")
         break
