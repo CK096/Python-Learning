@@ -33,9 +33,6 @@ def view_products_list():
               f"   Stock : {product["stock"]}\n"
               f" ")
 
-
-
-
 while True:
     choice = error_int(f"===== Inventory Management System =====\n"
                        f"1. Add Product\n"
