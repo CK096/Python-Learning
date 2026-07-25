@@ -1,87 +1,156 @@
-products = []
+def load_expense():
+    try:
+        with open(path_file, "r") as file:
+            for line in file:
+                data = line.strip().split(",")
+                category = data[0]
+                amount = float(data[1])
+                expenses.append({"category": category,"amount": amount})
+    except FileNotFoundError:
+        pass
 
-def product_empty(name):
-    if not name:
-        print("Name Cannot Be Empty!")
+def save_expense():
+    with open(path_file,"w") as file:
+        for expense in expenses:
+            file.write(f"{expense['category']},{expense['amount']}\n")
+
+def view_expense():
+    for index, expense in enumerate(expenses):
+        print(f"{index + 1}. {expense['category']} : RM {expense['amount']:.2f}")
+def empty_expense():
+    if not expenses:
+        print("Expenses record is empty!!")
         return True
     return False
 
-def products_empty():
-    if not products:
-        print("List is empty!")
+def negative_amount(amount):
+    if amount < 0:
+        print("Amount cannot less then 0 !")
         return True
     return False
 
-def error_int(prompt):
+def category_empty(category):
+    if not category:
+        print("Category cannot be empty!")
+        return True
+    return False
+
+def error_key(prompt):
     while True:
         try:
             return int(input(prompt))
         except ValueError:
-            print("Error")
-
+            print("Invalid Number")
 def error_float(prompt):
     while True:
         try:
             return float(input(prompt))
         except ValueError:
-            print("Invalid Price!")
+            print("Invalid Number")
 
-def view_products_list():
-    for index, product in enumerate(products):
-        print(f"{index + 1}. {product["name"]} \n"
-              f"   Price : RM{product["price"]:.2f}\n"
-              f"   Stock : {product["stock"]}\n"
-              f" ")
-
-
-
+expenses = []
+path_file = r"C:\Users\user\Desktop\workshop\expenses_record.txt"
+load_expense()
 
 while True:
-    choice = error_int(f"===== Inventory Management System =====\n"
-                       f"1. Add Product\n"
-                       f"2. View Product\n"
-                       f"3. Search Product\n"
-                       f"4. Exit\n"
-                       f"====================\n"
-                       f"Choice : ")
+    choice = error_key("=====Expense Tracker=====\n"
+                       "1.Add Expense\n"
+                       "2.View Expense\n"
+                       "3.Search Expense\n"
+                       "4.Delete Expense\n"
+                       "5.Total Expense\n"
+                       "6.Category Summary\n"
+                       "7.Edit Category\n"
+                       "8.Exit\n"
+                       "-------------------------\n"
+                       "Choice :")
     if choice == 1:
-        name = input("Product Name: ").strip().title()
-        if product_empty(name):
+        print("=====Add Tracker=====")
+        category = input("Type Of Category Expense:").strip().title()
+        if category_empty(category):
             continue
-        price = error_float("Price: RM ")
-        if price <= 0:
-            print("Price Cannot Below Than RM 0.01")
+        amount = error_float("How Many you use?: RM ")
+        if negative_amount(amount):
             continue
-        stock = error_int("Stock Quantity: ")
-        if stock < 0:
-            print("Stock Cannot Be Negative")
-            continue
-        products.append({"name": name,"price": price,"stock": stock})
+        expenses.append({"category": category, "amount": amount})
+        print("Add in Success!")
 
+        save_expense()
     elif choice == 2:
-        if products_empty():
+        if empty_expense():
             continue
-        print("===== Product List =====")
-        view_products_list()
-
+        print("=====Expense Tracker=====")
+        empty_expense()
+        view_expense()
     elif choice == 3:
-        if products_empty():
-            continue
         found = False
-        print("===== Search Product =====")
-        search = input("Search: ").strip().title()
-        if product_empty(search):
+        if empty_expense():
             continue
-        for product in products:
-            if search == product["name"]:
-                print(f"Product Found\n"
-                      f"{product['name']}\n"
-                      f"Price : RM {product['price']:.2f}\n"
-                      f"Stock : {product['stock']}")
+        search = input("what category expense you want to search: ").strip().title()
+        for index,result in enumerate(expenses):
+            if result["category"] == search:
                 found = True
-        if not found :
-            print("Product Not Found")
+                print(f"{index + 1}.{result['category']} RM {result['amount']:.2f}")
+        if not found:
+            print("Category Not Found")
 
     elif choice == 4:
-        print("Thanks for using Inventory Management System")
+        if empty_expense():
+            continue
+        print("=====Delete Tracker=====")
+        view_expense()
+        delete = error_key("Select list item need to remove: ")
+        if delete < 1 or delete > len(expenses):
+            print("Invalid")
+            continue
+        del expenses[delete - 1]
+        print("Item list remove Success")
+        save_expense()
+    elif choice == 5:
+        if empty_expense():
+            continue
+        total = 0
+        for expense in expenses:
+            total += expense["amount"]
+        print(f"Total is RM {total:.2f}")
+
+    elif choice == 6:
+        if empty_expense():
+            continue
+        summary = {}
+        print("===== Category Summary =====")
+        for expense in expenses:
+            if expense["category"] in summary:
+                summary[expense["category"]] += expense["amount"]
+            else:
+                summary[expense["category"]] = expense["amount"]
+        for category,price in summary.items():
+            print(f"{category} : RM {price:.2f}")
+
+    elif choice == 7:
+        if empty_expense():
+            continue
+        print("===== Edit Expense =====")
+        view_expense()
+        edit = error_key("Select expense number: ")
+        if edit > len(expenses) or edit < 1:
+            print("This Number Invalid")
+            continue
+        print(f"Current Category : {expenses[edit-1]["category"]}")
+        print(f"Current Amount : RM {expenses[edit-1]["amount"]:.2f}")
+        new_category = input("New Category: ").strip().title()
+        if category_empty(new_category):
+            continue
+        expenses[edit-1]["category"] = new_category
+        new_amount = error_float("New Amount: RM ")
+        if negative_amount(new_amount):
+            continue
+        expenses[edit - 1]["amount"] = new_amount
+        print(f"Update Success!\n "
+              f"Category: {expenses[edit-1]["category"]}\n"
+              f"Amount: RM {expenses[edit-1]["amount"]:.2f})")
+        save_expense()
+
+    elif choice == 8:
+        print("Thanks for using Expense Traker")
         break
