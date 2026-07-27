@@ -38,7 +38,8 @@ while True:
                        f"1. Add Product\n"
                        f"2. View Product\n"
                        f"3. Search Product\n"
-                       f"4. Exit\n"
+                       f"4. Delete Products\n"
+                       f"5. Exit\n"
                        f"====================\n"
                        f"Choice : ")
     if choice == 1:
@@ -80,5 +81,19 @@ while True:
             print("Product Not Found")
 
     elif choice == 4:
+        if products_empty():
+            continue
+        print("===== Delete Products =====")
+        view_products_list()
+        delete = error_int("Select Product Number: ")
+        if delete < 1 or delete > len(products):
+            print("Invalid Product Number")
+            continue
+        delete_name = products[delete-1]["name"]
+        del products[delete-1]
+        print(f"Delete Success!\n"
+              f"{delete_name} has been removed")
+
+    elif choice == 5:
         print("Thanks for using Inventory Management System")
         break
