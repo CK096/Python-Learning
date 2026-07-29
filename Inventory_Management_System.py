@@ -1,4 +1,19 @@
-products = []
+def save_products():
+    with open(path_file,"w") as file:
+        for product in products:
+            file.write(f"{product['name']},{product['price']},{product['stock']}\n")
+
+def load_products():
+    try:
+        with open(path_file,"r") as file:
+            for line in file:
+                data = line.strip().split(",")
+                name = data[0]
+                price = float(data[1])
+                stock = int(data[2])
+                products.append({"name": name, "price": price, "stock": stock})
+    except FileNotFoundError:
+        pass
 
 def product_empty(name):
     if not name:
@@ -26,6 +41,38 @@ def error_float(prompt):
         except ValueError:
             print("Invalid Price!")
 
+def edit_price(prompt):
+    while True:
+        user_input = input(prompt)
+        if user_input == "":
+            return None
+        try:
+            return float(user_input)
+        except ValueError:
+            print("Invalid Price!")
+
+def edit_name(prompt):
+    user_input = input(prompt)
+    if user_input == "":
+        return None
+    return user_input
+
+def edit_stock(prompt):
+    while True:
+        user_input = input(prompt)
+        if user_input == "":
+            return None
+        try:
+            return int(user_input)
+        except ValueError:
+            print("Invalid Stock")
+
+def len_products(number):
+    if number < 1 or number > len(products):
+        print("Invalid Product Number")
+        return True
+    return False
+
 def view_products_list():
     for index, product in enumerate(products):
         print(f"{index + 1}. {product["name"]} \n"
@@ -33,13 +80,19 @@ def view_products_list():
               f"   Stock : {product["stock"]}\n"
               f" ")
 
+
+products = []
+path_file = r'C:\Users\user\Desktop\workshop\Inventory_Management_System.txt'
+load_products()
+
 while True:
     choice = error_int(f"===== Inventory Management System =====\n"
                        f"1. Add Product\n"
                        f"2. View Product\n"
                        f"3. Search Product\n"
                        f"4. Delete Products\n"
-                       f"5. Exit\n"
+                       f"5. Edit Products\n"
+                       f"6. Exit\n"
                        f"====================\n"
                        f"Choice : ")
     if choice == 1:
@@ -55,6 +108,7 @@ while True:
             print("Stock Cannot Be Negative")
             continue
         products.append({"name": name,"price": price,"stock": stock})
+        save_products()
 
     elif choice == 2:
         if products_empty():
@@ -86,14 +140,25 @@ while True:
         print("===== Delete Products =====")
         view_products_list()
         delete = error_int("Select Product Number: ")
-        if delete < 1 or delete > len(products):
-            print("Invalid Product Number")
+        if len_products(delete):
             continue
         delete_name = products[delete-1]["name"]
         del products[delete-1]
         print(f"Delete Success!\n"
               f"{delete_name} has been removed")
+        save_products()
 
     elif choice == 5:
+        if products_empty():
+            continue
+        print("===== Delete Products =====")
+        view_products_list()
+        edit = error_int("Select Number Item Edit: ")
+        if len_products(edit):
+            continue
+        # 到这里写了一半
+
+    elif choice == 6:
         print("Thanks for using Inventory Management System")
+        save_products()
         break
