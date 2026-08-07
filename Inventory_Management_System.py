@@ -52,7 +52,7 @@ def edit_price(prompt):
             print("Invalid Price!")
 
 def edit_name(prompt):
-    user_input = input(prompt)
+    user_input = input(prompt).strip().title()
     if user_input == "":
         return None
     return user_input
@@ -72,6 +72,19 @@ def len_products(number):
         print("Invalid Product Number")
         return True
     return False
+
+def price_less_than_0(price):
+    if price <= 0:
+        print("Price Cannot Below Than RM 0.01")
+        return True
+    return False
+
+def stock_less_than_0(stock):
+    if stock < 0:
+        print("Stock Cannot Be Negative")
+        return True
+    return False
+
 
 def view_products_list():
     for index, product in enumerate(products):
@@ -100,12 +113,10 @@ while True:
         if product_empty(name):
             continue
         price = error_float("Price: RM ")
-        if price <= 0:
-            print("Price Cannot Below Than RM 0.01")
+        if price_less_than_0(price):
             continue
         stock = error_int("Stock Quantity: ")
-        if stock < 0:
-            print("Stock Cannot Be Negative")
+        if stock_less_than_0(stock):
             continue
         products.append({"name": name,"price": price,"stock": stock})
         save_products()
@@ -151,12 +162,28 @@ while True:
     elif choice == 5:
         if products_empty():
             continue
-        print("===== Delete Products =====")
+        print("===== Edit Products =====")
         view_products_list()
         edit = error_int("Select Number Item Edit: ")
         if len_products(edit):
             continue
-        # 到这里写了一半
+        print(f"Current Name : {products[edit-1]["name"]}")
+        new_name = edit_name("New Name (Enter 保持原本): ")
+        if new_name is not None:
+            products[edit - 1]["name"] = new_name
+        print(f"Current Price : {products[edit - 1]["price"]:.2f}")
+        new_price = edit_price("New Price (Enter 保持原本): ")
+        if new_price is not None:
+            if price_less_than_0(new_price):
+                continue
+            products[edit - 1]["price"] = new_price
+        print(f"Current Stock : {products[edit - 1]["stock"]}")
+        new_stock = edit_stock("New stock (Enter 保持原本): ")
+        if new_stock is not None:
+            if stock_less_than_0(new_stock):
+                continue
+            products[edit - 1]["stock"] = new_stock
+        save_products()
 
     elif choice == 6:
         print("Thanks for using Inventory Management System")
