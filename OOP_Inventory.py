@@ -30,8 +30,24 @@ class Product:
             self.__stock -= stock
             return True
 
+    def sell(self,sell):
+        if self.remove_stock(sell):
+            print(f"{self.name} sell {sell} Success")
+        else:
+            print("Stock Not Enough")
+
+    def get_price(self):
+        return self.__price
+
+    def get_stock(self):
+        return self.__stock
+
+
+
 product1 = Product("Laptop",3500,10)
 product1.add_stock(5)
 product1.change_price(4000)
-product1.remove_stock(3)
+product1.sell(3)
+print(product1.get_price())
+print(product1.get_stock())
 print(product1)
