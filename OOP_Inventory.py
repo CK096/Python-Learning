@@ -42,12 +42,53 @@ class Product:
     def get_stock(self):
         return self.__stock
 
+class Inventory:
+    def __init__(self):
+        self.products = []
+
+    def add_product(self,product):
+        self.products.append(product)
+
+    def view_products(self):
+        for product in self.products:
+            print(product)
+
+    def search_product(self,item):
+        for product in self.products:
+            if item.title() == product.name:
+                print(product)
+                return True
+
+        print("Product Not Found")
+        return False
+
+    def delete_product(self,item):
+        for index,product in enumerate(self.products):
+            if item.title() == product.name:
+                self.products.pop(index)
+                print(f"{item} Delete Success")
+                return True
+
+        print("Product Not Found")
+        return False
+
+    def edit_product_price(self,name,price):
+        name = name.title()
+        for product in self.products:
+            if name == product.name:
+                product.change_price(price)
+                return True
+
+        print("Product Not Found")
+        return False
 
 
 product1 = Product("Laptop",3500,10)
-product1.add_stock(5)
-product1.change_price(4000)
-product1.sell(3)
-print(product1.get_price())
-print(product1.get_stock())
-print(product1)
+product2 = Product("Mouse", 80, 20)
+inventory = Inventory()
+inventory.add_product(product1)
+inventory.add_product(product2)
+inventory.search_product("Mouse")
+inventory.delete_product("Mouse")
+inventory.edit_product_price("Laptop",4000)
+inventory.view_products()
