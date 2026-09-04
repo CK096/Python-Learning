@@ -21,7 +21,7 @@ class Product:
             print("Prompt Error")
         else:
             self.__stock += qty
-            print(f"Stock {self.name} add in stock quantity {self.__stock} success")
+            print(f"Stock {self.name} add in stock quantity {qty} success")
 
     def remove_stock(self,stock):
         if stock > self.__stock:
@@ -82,13 +82,27 @@ class Inventory:
         print("Product Not Found")
         return False
 
+    def add_stock2 (self,name,stock):
+        name = name.title()
+        for product in self.products:
+            if name == product.name:
+                product.add_stock(stock)
+                return True
+
+        print("Product Not Found")
+        return False
+
+
+
 
 product1 = Product("Laptop",3500,10)
 product2 = Product("Mouse", 80, 20)
 inventory = Inventory()
+
 inventory.add_product(product1)
 inventory.add_product(product2)
 inventory.search_product("Mouse")
 inventory.delete_product("Mouse")
 inventory.edit_product_price("Laptop",4000)
+inventory.add_stock2("Laptop",5)
 inventory.view_products()
