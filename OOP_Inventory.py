@@ -92,6 +92,19 @@ class Inventory:
         print("Product Not Found")
         return False
 
+    def remove_stock(self,name,stock):
+        name = name.title()
+        for product in self.products:
+            if name == product.name:
+                if product.remove_stock(stock):
+                    print("Remove Success")
+                    return True
+                else:
+                    print("Not Enough Stock")
+                    return False
+        print("Product Not Found")
+        return False
+
 
 
 
@@ -101,8 +114,7 @@ inventory = Inventory()
 
 inventory.add_product(product1)
 inventory.add_product(product2)
-inventory.search_product("Mouse")
 inventory.delete_product("Mouse")
 inventory.edit_product_price("Laptop",4000)
-inventory.add_stock2("Laptop",5)
+inventory.remove_stock("Laptop",5)
 inventory.view_products()
