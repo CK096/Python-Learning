@@ -1,125 +1,36 @@
-class Product:
-    def __init__(self,name,price,stock):
-        self.name = name
-        self.__price = price
-        self.__stock = stock
+def save_products():
+    with open(path_file,"w") as file:
+        for product in products:
+            file.write(f"{product['name']},{product['price']},{product['stock']}\n")
 
-    def __str__(self):
-        return (f"Name: {self.name}\n"
-                f"   Price : RM{self.__price:.2f}\n"
-                f"   Stock: {self.__stock}")
+def load_products():
+    try:
+        with open(path_file,"r") as file:
+            for line in file:
+                data = line.strip().split(",")
+                name = data[0]
+                price = float(data[1])
+                stock = int(data[2])
+                products.append({"name": name, "price": price, "stock": stock})
+    except FileNotFoundError:
+        pass
 
-    def change_price(self,price):
-        if price <= 0:
-            print("Price Must Greater Than 0")
-            return False
-        else:
-            self.__price = price
-            print(f"Price {self.name} Amend to RM{self.__price:.2f} Success!")
-            return True
+def product_empty(name):
+    if not name:
+        print("Name Cannot Be Empty!")
+        return True
+    return False
 
-    def add_stock(self,qty):
-        if qty < 1:
-            print("Prompt Error")
-            return False
-        else:
-            self.__stock += qty
-            print(f"Stock {self.name} add in stock quantity {qty} success")
-            return True
-
-    def remove_stock(self,stock):
-        if stock > self.__stock:
-            return False
-        else:
-            self.__stock -= stock
-            return True
-
-    def sell(self,sell):
-        if self.remove_stock(sell):
-            print(f"{self.name} sell {sell} Success")
-        else:
-            print("Stock Not Enough")
-
-    def get_price(self):
-        return self.__price
-
-    def get_stock(self):
-        return self.__stock
-
-class Inventory:
-    def __init__(self):
-        self.products = []
-
-    def add_product(self,product):
-        self.products.append(product)
-
-    def view_products(self):
-        for index, product in enumerate(self.products):
-            print(f"{index+1}. {product}\n\n")
-
-    def search_product(self,item):
-        for product in self.products:
-            if item.title().strip() == product.name:
-                print(product)
-                return True
-
-        print("Product Not Found")
-        return False
-
-    def delete_product(self,item):
-        for index,product in enumerate(self.products):
-            if item.title().strip() == product.name:
-                self.products.pop(index)
-                print(f"{item} Delete Success")
-                return True
-
-        print("Product Not Found")
-        return False
-
-    def edit_product_price(self,name,price):
-        name = name.title().strip()
-        for product in self.products:
-            if name == product.name:
-                if product.change_price(price):
-                    return True
-                else:
-                    return False
-
-        print("Product Not Found")
-        return False
-
-    def add_stock2 (self,name,stock):
-        name = name.title().strip()
-        for product in self.products:
-            if name == product.name:
-                return product.add_stock(stock)
-
-        print("Product Not Found")
-        return False
-
-    def remove_stock(self,name,stock):
-        name = name.title().strip()
-        for product in self.products:
-            if name == product.name:
-                if product.remove_stock(stock):
-                    print("Remove Success")
-                    return True
-                else:
-                    print("Not Enough Stock")
-                    return False
-        print("Product Not Found")
-        return False
+def products_empty():
+    if not products:
+        print("List is empty!")
+        return True
+    return False
 
 def error_int(prompt):
     while True:
         try:
-            value = int(input(prompt))
-
-            if value <= 0:
-                print("Quantity Cant Be Negative")
-            else:
-                return value
-
+            return int(input(prompt))
         except ValueError:
             print("Error")
 
@@ -128,58 +39,153 @@ def error_float(prompt):
         try:
             return float(input(prompt))
         except ValueError:
-            print("Error")
+            print("Invalid Price!")
+
+def edit_price(prompt):
+    while True:
+        user_input = input(prompt)
+        if user_input == "":
+            return None
+        try:
+            return float(user_input)
+        except ValueError:
+            print("Invalid Price!")
+
+def edit_name(prompt):
+    user_input = input(prompt).strip().title()
+    if user_input == "":
+        return None
+    return user_input
+
+def edit_stock(prompt):
+    while True:
+        user_input = input(prompt)
+        if user_input == "":
+            return None
+        try:
+            return int(user_input)
+        except ValueError:
+            print("Invalid Stock")
+
+def len_products(number):
+    if number < 1 or number > len(products):
+        print("Invalid Product Number")
+        return True
+    return False
+
+def price_less_than_0(price):
+    if price <= 0:
+        print("Price Cannot Below Than RM 0.01")
+        return True
+    return False
+
+def stock_less_than_0(stock):
+    if stock < 0:
+        print("Stock Cannot Be Negative")
+        return True
+    return False
 
 
+def view_products_list():
+    for index, product in enumerate(products):
+        print(f"{index + 1}. {product["name"]} \n"
+              f"   Price : RM{product["price"]:.2f}\n"
+              f"   Stock : {product["stock"]}\n"
+              f" ")
 
 
-inventory = Inventory()
+products = []
+path_file = r'C:\Users\user\Desktop\workshop\Inventory_Management_System.txt'
+load_products()
 
 while True:
-    choice = error_int("===== Inventory Management System =====\n"
-                        "1. Add Product\n"
-                        "2. View Product\n"
-                        "3. Search Product\n"
-                        "4. Delete Product\n"
-                        "5. Edit Price\n"
-                        "6. Add Stock\n"
-                        "7. Remove Stock\n"
-                        "8. Exit\n"
-                        "Enter Your Choice: ")
+    choice = error_int(f"===== Inventory Management System =====\n"
+                       f"1. Add Product\n"
+                       f"2. View Product\n"
+                       f"3. Search Product\n"
+                       f"4. Delete Products\n"
+                       f"5. Edit Products\n"
+                       f"6. Exit\n"
+                       f"====================\n"
+                       f"Choice : ")
     if choice == 1:
-        name = input("Product Name: ").title().strip()
-        price = error_float("Product price: RM")
+        name = input("Product Name: ").strip().title()
+        if product_empty(name):
+            continue
+        price = error_float("Price: RM ")
+        if price_less_than_0(price):
+            continue
         stock = error_int("Stock Quantity: ")
-        product = Product(name,price,stock)
-        inventory.add_product(product)
+        if stock_less_than_0(stock):
+            continue
+        products.append({"name": name,"price": price,"stock": stock})
+        save_products()
 
     elif choice == 2:
-        inventory.view_products()
+        if products_empty():
+            continue
+        print("===== Product List =====")
+        view_products_list()
 
     elif choice == 3:
-        search = input("Key In Product You Search: ")
-        inventory.search_product(search)
+        if products_empty():
+            continue
+        found = False
+        print("===== Search Product =====")
+        search = input("Search: ").strip().title()
+        if product_empty(search):
+            continue
+        for product in products:
+            if search == product["name"]:
+                print(f"Product Found\n"
+                      f"{product['name']}\n"
+                      f"Price : RM {product['price']:.2f}\n"
+                      f"Stock : {product['stock']}")
+                found = True
+        if not found :
+            print("Product Not Found")
 
     elif choice == 4:
-        inventory.view_products()
-        delete = input("Key In Product You Want Remove: ")
-        inventory.delete_product(delete)
+        if products_empty():
+            continue
+        print("===== Delete Products =====")
+        view_products_list()
+        delete = error_int("Select Product Number: ")
+        if len_products(delete):
+            continue
+        delete_name = products[delete-1]["name"]
+        del products[delete-1]
+        print(f"Delete Success!\n"
+              f"{delete_name} has been removed")
+        save_products()
 
     elif choice == 5:
-        name = input("Product Name: ")
-        price = error_float("Product Price: RM")
-        inventory.edit_product_price(name,price)
+        if products_empty():
+            continue
+        print("===== Edit Products =====")
+        view_products_list()
+        edit = error_int("Select Number Item Edit: ")
+        if len_products(edit):
+            continue
+        print(f"Current Name : {products[edit-1]["name"]}")
+        new_name = edit_name("New Name (Enter 保持原本): ")
+        if new_name is not None:
+            products[edit - 1]["name"] = new_name
+        print(f"Current Price : {products[edit - 1]["price"]:.2f}")
+        new_price = edit_price("New Price (Enter 保持原本): ")
+        if new_price is not None:
+            if price_less_than_0(new_price):
+                continue
+            products[edit - 1]["price"] = new_price
+        print(f"Current Stock : {products[edit - 1]["stock"]}")
+        new_stock = edit_stock("New stock (Enter 保持原本): ")
+        if new_stock is not None:
+            if stock_less_than_0(new_stock):
+                continue
+            products[edit - 1]["stock"] = new_stock
+        save_products()
 
     elif choice == 6:
-        name = input("Product Name: ")
-        stock = error_int("Stock Qty Add: ")
-        inventory.add_stock2(name,stock)
-
-    elif choice == 7:
-        name = input("Product Name: ")
-        stock = error_int("Stock Qty Remove: ")
-        inventory.remove_stock(name, stock)
-
-    elif choice == 8:
-        print("Goodbye")
+        print("Thanks for using Inventory Management System")
+        save_products()
         break
