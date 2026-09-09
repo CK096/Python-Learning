@@ -110,13 +110,13 @@ class Inventory:
         print("Product Not Found")
         return False
 
-def error_int(prompt):
+def positive_int(prompt):
     while True:
         try:
             value = int(input(prompt))
 
             if value <= 0:
-                print("Quantity Cant Be Negative")
+                print("Number Need More Then 0")
             else:
                 return value
 
@@ -136,7 +136,7 @@ def error_float(prompt):
 inventory = Inventory()
 
 while True:
-    choice = error_int("===== Inventory Management System =====\n"
+    choice = positive_int("===== Inventory Management System =====\n"
                         "1. Add Product\n"
                         "2. View Product\n"
                         "3. Search Product\n"
@@ -149,7 +149,7 @@ while True:
     if choice == 1:
         name = input("Product Name: ").title().strip()
         price = error_float("Product price: RM")
-        stock = error_int("Stock Quantity: ")
+        stock = positive_int("Stock Quantity: ")
         product = Product(name,price,stock)
         inventory.add_product(product)
 
@@ -172,12 +172,12 @@ while True:
 
     elif choice == 6:
         name = input("Product Name: ")
-        stock = error_int("Stock Qty Add: ")
+        stock = positive_int("Stock Qty Add: ")
         inventory.add_stock2(name,stock)
 
     elif choice == 7:
         name = input("Product Name: ")
-        stock = error_int("Stock Qty Remove: ")
+        stock = positive_int("Stock Qty Remove: ")
         inventory.remove_stock(name, stock)
 
     elif choice == 8:
