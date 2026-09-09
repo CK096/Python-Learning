@@ -21,9 +21,11 @@ class Product:
     def add_stock(self,qty):
         if qty < 1:
             print("Prompt Error")
+            return False
         else:
             self.__stock += qty
             print(f"Stock {self.name} add in stock quantity {qty} success")
+            return True
 
     def remove_stock(self,stock):
         if stock > self.__stock:
@@ -78,8 +80,10 @@ class Inventory:
         name = name.title().strip()
         for product in self.products:
             if name == product.name:
-                product.change_price(price)
-                return True
+                if product.change_price(price):
+                    return True
+                else:
+                    return False
 
         print("Product Not Found")
         return False
@@ -88,8 +92,7 @@ class Inventory:
         name = name.title().strip()
         for product in self.products:
             if name == product.name:
-                product.add_stock(stock)
-                return True
+                return product.add_stock(stock)
 
         print("Product Not Found")
         return False
@@ -107,45 +110,76 @@ class Inventory:
         print("Product Not Found")
         return False
 
+def error_int(prompt):
+    while True:
+        try:
+            value = int(input(prompt))
+
+            if value <= 0:
+                print("Quantity Cant Be Negative")
+            else:
+                return value
+
+        except ValueError:
+            print("Error")
+
+def error_float(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("Error")
+
+
+
 
 inventory = Inventory()
 
 while True:
-    choice = int(input("===== Inventory Management System =====\n"
-                       "1. Add Product\n"
-                       "2. View Product\n"
-                       "3. Search Product\n"
-                       "4. Delete Product\n"
-                       "5. Edit Price\n"
-                       "6. Add Stock\n"
-                       "7. Remove Stock\n"
-                       "8. Exit\n"
-                       "Enter Your Choice: "))
+    choice = error_int("===== Inventory Management System =====\n"
+                        "1. Add Product\n"
+                        "2. View Product\n"
+                        "3. Search Product\n"
+                        "4. Delete Product\n"
+                        "5. Edit Price\n"
+                        "6. Add Stock\n"
+                        "7. Remove Stock\n"
+                        "8. Exit\n"
+                        "Enter Your Choice: ")
     if choice == 1:
         name = input("Product Name: ").title().strip()
-        price = float(input("Product price: RM"))
-        stock = int(input("Stock Quantity: "))
+        price = error_float("Product price: RM")
+        stock = error_int("Stock Quantity: ")
         product = Product(name,price,stock)
         inventory.add_product(product)
 
     elif choice == 2:
         inventory.view_products()
+
     elif choice == 3:
         search = input("Key In Product You Search: ")
         inventory.search_product(search)
+
     elif choice == 4:
         inventory.view_products()
         delete = input("Key In Product You Want Remove: ")
         inventory.delete_product(delete)
+
     elif choice == 5:
         name = input("Product Name: ")
-        price = float(input("Product Price: RM"))
+        price = error_float("Product Price: RM")
         inventory.edit_product_price(name,price)
 
     elif choice == 6:
-        print("Add Stock")
+        name = input("Product Name: ")
+        stock = error_int("Stock Qty Add: ")
+        inventory.add_stock2(name,stock)
+
     elif choice == 7:
-        print("Remove Stock")
+        name = input("Product Name: ")
+        stock = error_int("Stock Qty Remove: ")
+        inventory.remove_stock(name, stock)
+
     elif choice == 8:
         print("Goodbye")
         break
