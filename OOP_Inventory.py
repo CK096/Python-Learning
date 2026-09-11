@@ -9,6 +9,11 @@ class Product:
                 f"   Price : RM{self.__price:.2f}\n"
                 f"   Stock: {self.__stock}")
 
+    def to_dict(self):
+        return {"name": self.name,
+                "price": self.get_price(),
+                "stock": self.get_stock()}
+
     def change_price(self,price):
         if price <= 0:
             print("Price Must Greater Than 0")
@@ -49,6 +54,14 @@ class Product:
 class Inventory:
     def __init__(self):
         self.products = []
+
+    def to_list(self):
+        products_list = []
+        for product in self.products:
+            item = product.to_dict()
+            products_list.append(item)
+
+        return products_list
 
     def add_product(self,product):
         self.products.append(product)
@@ -110,13 +123,13 @@ class Inventory:
         print("Product Not Found")
         return False
 
-def positive_int(prompt):
+def error_int(prompt):
     while True:
         try:
             value = int(input(prompt))
 
             if value <= 0:
-                print("Number Need More Then 0")
+                print("Quantity Cant Be Negative")
             else:
                 return value
 
@@ -136,7 +149,7 @@ def error_float(prompt):
 inventory = Inventory()
 
 while True:
-    choice = positive_int("===== Inventory Management System =====\n"
+    choice = error_int("===== Inventory Management System =====\n"
                         "1. Add Product\n"
                         "2. View Product\n"
                         "3. Search Product\n"
@@ -149,7 +162,7 @@ while True:
     if choice == 1:
         name = input("Product Name: ").title().strip()
         price = error_float("Product price: RM")
-        stock = positive_int("Stock Quantity: ")
+        stock = error_int("Stock Quantity: ")
         product = Product(name,price,stock)
         inventory.add_product(product)
 
@@ -172,12 +185,12 @@ while True:
 
     elif choice == 6:
         name = input("Product Name: ")
-        stock = positive_int("Stock Qty Add: ")
+        stock = error_int("Stock Qty Add: ")
         inventory.add_stock2(name,stock)
 
     elif choice == 7:
         name = input("Product Name: ")
-        stock = positive_int("Stock Qty Remove: ")
+        stock = error_int("Stock Qty Remove: ")
         inventory.remove_stock(name, stock)
 
     elif choice == 8:
