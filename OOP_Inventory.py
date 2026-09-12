@@ -1,3 +1,5 @@
+import json
+
 class Product:
     def __init__(self,name,price,stock):
         self.name = name
@@ -63,6 +65,25 @@ class Inventory:
 
         return products_list
 
+    def save_json(self):
+        path_file = r"C:\Users\user\Desktop\workshop\oop.inventory.json"
+        product_list = self.to_list()
+
+        with open(path_file, "w", encoding="utf8") as file:
+            json.dump(product_list,file,indent=4,ensure_ascii=False)
+
+    def load_json(self):
+        path_file = r"C:\Users\user\Desktop\workshop\oop.inventory.json"
+        with open(path_file, "r", encoding="utf8") as file:
+            products = json.load(file)
+
+        for data in products:
+            name = data["name"]
+            price = data["price"]
+            stock = data["stock"]
+            product = Product(name, price, stock)
+            self.add_product(product)
+
     def add_product(self,product):
         self.products.append(product)
 
@@ -93,15 +114,12 @@ class Inventory:
         name = name.title().strip()
         for product in self.products:
             if name == product.name:
-                if product.change_price(price):
-                    return True
-                else:
-                    return False
+                return product.change_price(price)
 
         print("Product Not Found")
         return False
 
-    def add_stock2 (self,name,stock):
+    def add_stock(self,name,stock):
         name = name.title().strip()
         for product in self.products:
             if name == product.name:
@@ -147,6 +165,7 @@ def error_float(prompt):
 
 
 inventory = Inventory()
+inventory.load_json()
 
 while True:
     choice = error_int("===== Inventory Management System =====\n"
@@ -165,6 +184,7 @@ while True:
         stock = error_int("Stock Quantity: ")
         product = Product(name,price,stock)
         inventory.add_product(product)
+        inventory.save_json()
 
     elif choice == 2:
         inventory.view_products()
@@ -177,21 +197,28 @@ while True:
         inventory.view_products()
         delete = input("Key In Product You Want Remove: ")
         inventory.delete_product(delete)
+        inventory.save_json()
 
     elif choice == 5:
+        inventory.view_products()
         name = input("Product Name: ")
         price = error_float("Product Price: RM")
         inventory.edit_product_price(name,price)
+        inventory.save_json()
 
     elif choice == 6:
+        inventory.view_products()
         name = input("Product Name: ")
         stock = error_int("Stock Qty Add: ")
-        inventory.add_stock2(name,stock)
+        inventory.add_stock(name,stock)
+        inventory.save_json()
 
     elif choice == 7:
+        inventory.view_products()
         name = input("Product Name: ")
         stock = error_int("Stock Qty Remove: ")
         inventory.remove_stock(name, stock)
+        inventory.save_json()
 
     elif choice == 8:
         print("Goodbye")
