@@ -20,38 +20,45 @@ class Product:
         if price <= 0:
             print("Price Must Greater Than 0")
             return False
-        else:
-            self.__price = price
-            print(f"Price {self.name} Amend to RM{self.__price:.2f} Success!")
-            return True
+
+        self.__price = price
+        print(f"Price {self.name} Amend to RM{self.__price:.2f} Success!")
+        return True
 
     def add_stock(self,qty):
         if qty < 1:
             print("Prompt Error")
             return False
-        else:
-            self.__stock += qty
-            print(f"Stock {self.name} add in stock quantity {qty} success")
-            return True
+
+        self.__stock += qty
+        print(f"Stock {self.name} add in stock quantity {qty} success")
+        return True
 
     def remove_stock(self,stock):
-        if stock > self.__stock:
+        if stock > self.__stock or stock < 1:
             return False
-        else:
-            self.__stock -= stock
-            return True
+
+        self.__stock -= stock
+        return True
 
     def sell(self,sell):
         if self.remove_stock(sell):
             print(f"{self.name} sell {sell} Success")
-        else:
-            print("Stock Not Enough")
+            return True
+
+        print("Stock Not Enough")
+        return False
 
     def get_price(self):
         return self.__price
 
     def get_stock(self):
         return self.__stock
+
+class FoodProduct(Product):
+    def __init__(self,name,price,stock,expired):
+        super().__init__(name,price,stock)
+        self.expired = expired
 
 class Inventory:
     def __init__(self):
@@ -102,7 +109,7 @@ class Inventory:
 
     def delete_product(self,item):
         for index,product in enumerate(self.products):
-            if item.title().strip() == product.name:
+            if item == product.name:
                 self.products.pop(index)
                 print(f"{item} Delete Success")
                 return True
@@ -111,7 +118,6 @@ class Inventory:
         return False
 
     def edit_product_price(self,name,price):
-        name = name.title().strip()
         for product in self.products:
             if name == product.name:
                 return product.change_price(price)
@@ -120,7 +126,6 @@ class Inventory:
         return False
 
     def add_stock(self,name,stock):
-        name = name.title().strip()
         for product in self.products:
             if name == product.name:
                 return product.add_stock(stock)
@@ -129,7 +134,6 @@ class Inventory:
         return False
 
     def remove_stock(self,name,stock):
-        name = name.title().strip()
         for product in self.products:
             if name == product.name:
                 if product.remove_stock(stock):
@@ -161,13 +165,22 @@ def error_float(prompt):
         except ValueError:
             print("Error")
 
+def input_name(prompt):
+    name = input(prompt).title().strip()
+    return name
+
 
 
 
 inventory = Inventory()
 inventory.load_json()
 
+food1 = FoodProduct("Milk", 3.2,50,"11/11/2026")
+print(food1)
+
 while True:
+    save = False
+
     choice = error_int("===== Inventory Management System =====\n"
                         "1. Add Product\n"
                         "2. View Product\n"
@@ -179,47 +192,50 @@ while True:
                         "8. Exit\n"
                         "Enter Your Choice: ")
     if choice == 1:
-        name = input("Product Name: ").title().strip()
+        name = input_name("Product Name: ")
         price = error_float("Product price: RM")
         stock = error_int("Stock Quantity: ")
         product = Product(name,price,stock)
         inventory.add_product(product)
-        inventory.save_json()
+        save = True
 
     elif choice == 2:
         inventory.view_products()
 
     elif choice == 3:
-        search = input("Key In Product You Search: ")
+        search = input_name("Key In Product You Search: ")
         inventory.search_product(search)
 
     elif choice == 4:
         inventory.view_products()
-        delete = input("Key In Product You Want Remove: ")
+        delete = input_name("Key In Product You Want Remove: ")
         inventory.delete_product(delete)
-        inventory.save_json()
+        save = True
 
     elif choice == 5:
         inventory.view_products()
-        name = input("Product Name: ")
+        name = input_name("Product Name: ")
         price = error_float("Product Price: RM")
         inventory.edit_product_price(name,price)
-        inventory.save_json()
+        save = True
 
     elif choice == 6:
         inventory.view_products()
-        name = input("Product Name: ")
+        name = input_name("Product Name: ")
         stock = error_int("Stock Qty Add: ")
         inventory.add_stock(name,stock)
-        inventory.save_json()
+        save = True
 
     elif choice == 7:
         inventory.view_products()
-        name = input("Product Name: ")
+        name = input_name("Product Name: ")
         stock = error_int("Stock Qty Remove: ")
         inventory.remove_stock(name, stock)
-        inventory.save_json()
+        save = True
 
     elif choice == 8:
         print("Goodbye")
         break
+
+    if save:
+        inventory.save_json()
