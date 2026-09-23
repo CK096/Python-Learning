@@ -60,6 +60,15 @@ class FoodProduct(Product):
         super().__init__(name,price,stock)
         self.expired = expired
 
+    def __str__(self):
+        return super().__str__() + f"\n   Expired Date: {self.expired}"
+
+    def to_dict(self):
+        data = super().to_dict()
+        data["expired_date"] = self.expired
+        return data
+
+
 class Inventory:
     def __init__(self):
         self.products = []
@@ -88,7 +97,11 @@ class Inventory:
             name = data["name"]
             price = data["price"]
             stock = data["stock"]
-            product = Product(name, price, stock)
+            if "expired_date" in data:
+                expired_stock = data["expired_date"]
+                product = FoodProduct(name, price, stock,expired_stock)
+            else:
+                product = Product(name, price, stock)
             self.add_product(product)
 
     def add_product(self,product):
@@ -158,6 +171,19 @@ def error_int(prompt):
         except ValueError:
             print("Error")
 
+def valid_int(prompt,min_value,max_value):
+    while True:
+        try:
+            value = int(input(prompt))
+
+            if min_value <= value <= max_value:
+                return value
+            else:
+                print(f"Prompt can use on {min_value} to {max_value} only")
+
+        except ValueError:
+            print("Error")
+
 def error_float(prompt):
     while True:
         try:
@@ -176,12 +202,12 @@ inventory = Inventory()
 inventory.load_json()
 
 food1 = FoodProduct("Milk", 3.2,50,"11/11/2026")
-print(food1)
+
 
 while True:
     save = False
 
-    choice = error_int("===== Inventory Management System =====\n"
+    choice = valid_int("===== Inventory Management System =====\n"
                         "1. Add Product\n"
                         "2. View Product\n"
                         "3. Search Product\n"
@@ -190,12 +216,20 @@ while True:
                         "6. Add Stock\n"
                         "7. Remove Stock\n"
                         "8. Exit\n"
-                        "Enter Your Choice: ")
+                        "Enter Your Choice: ",1,8)
     if choice == 1:
+        product_type = valid_int("===== Product Type =====\n"
+                                 "1.Normal Product\n"
+                                 "2.Food Product\n"
+                                 "Enter Type: ",1,2)
         name = input_name("Product Name: ")
         price = error_float("Product price: RM")
         stock = error_int("Stock Quantity: ")
-        product = Product(name,price,stock)
+        if product_type == 1:
+            product = Product(name,price,stock)
+        elif product_type == 2:
+            expired_date = input_name("Expired Date: ")
+            product = FoodProduct(name,price,stock,expired_date)
         inventory.add_product(product)
         save = True
 
