@@ -68,6 +68,18 @@ class FoodProduct(Product):
         data["expired_date"] = self.expired
         return data
 
+class ElectronicProduct(Product):
+    def __init__(self,name,price,stock,warranty):
+        super().__init__(name,price,stock)
+        self.warranty = warranty
+
+    def __str__(self):
+        return super().__str__ () + f"\nWarranty : {self.warranty}"
+
+    def to_dict(self):
+        data = super().to_dict()
+        data["warranty"] = self.warranty
+        return data
 
 class Inventory:
     def __init__(self):
