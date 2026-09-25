@@ -74,7 +74,7 @@ class ElectronicProduct(Product):
         self.warranty = warranty
 
     def __str__(self):
-        return super().__str__ () + f"\nWarranty : {self.warranty}"
+        return super().__str__ () + f"\n   Warranty : {self.warranty}"
 
     def to_dict(self):
         data = super().to_dict()
@@ -110,8 +110,12 @@ class Inventory:
             price = data["price"]
             stock = data["stock"]
             if "expired_date" in data:
-                expired_stock = data["expired_date"]
-                product = FoodProduct(name, price, stock,expired_stock)
+                expired_date = data["expired_date"]
+                product = FoodProduct(name, price, stock,expired_date)
+            elif "warranty" in data:
+                warranty = data["warranty"]
+                product = ElectronicProduct(name,price,stock,warranty)
+
             else:
                 product = Product(name, price, stock)
             self.add_product(product)
@@ -208,8 +212,6 @@ def input_name(prompt):
     return name
 
 
-
-
 inventory = Inventory()
 inventory.load_json()
 
@@ -233,7 +235,8 @@ while True:
         product_type = valid_int("===== Product Type =====\n"
                                  "1.Normal Product\n"
                                  "2.Food Product\n"
-                                 "Enter Type: ",1,2)
+                                 "3.Electronic Product\n"
+                                 "Enter Type: ",1,3)
         name = input_name("Product Name: ")
         price = error_float("Product price: RM")
         stock = error_int("Stock Quantity: ")
@@ -242,6 +245,9 @@ while True:
         elif product_type == 2:
             expired_date = input_name("Expired Date: ")
             product = FoodProduct(name,price,stock,expired_date)
+        elif product_type == 3:
+            warranty = input_name("Warranty: ")
+            product = ElectronicProduct(name,price,stock,warranty)
         inventory.add_product(product)
         save = True
 
